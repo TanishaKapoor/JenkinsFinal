@@ -80,10 +80,18 @@ pipeline
                 }
         }
          stage('Helm chart Deployment') {
-                steps {  
-                            bat "helm upgrade tanishakapoor-master-chart ./helmchart --install"
+                // steps {  
+                //             bat "helm upgrade tanishakapoor-master-chart ./helmchart --install"
+                //       }
+                    steps {   
+                    script {
+                        namespace = powershell(returnStdout: true, script:'kubectl get ns ns-tanishakapoor-master  -o=custom-columns=NAME:.metadata.name --ignore-not-found')
+                        if(!namespace){
+                             bat "kubectl create ns ns-tanishakapoor-master"
+                        }
+                    }
+                            bat "helm upgrade tanishakapoor-master-chart ./helmchart --install -n ns-tanishakapoor-master --set image.tag=${BUILD_NUMBER}"
                       }
-                    
             }
 
     }
