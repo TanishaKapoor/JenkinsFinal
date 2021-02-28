@@ -56,6 +56,12 @@ pipeline
             }
             
         }
+        stage('PushtoDTR') {
+                    steps {
+                         bat "docker tag i-tanishakapoor-master dtr.nagarro.com:443/i-tanishakapoor-master"
+                        // bat "docker push dtr.nagarro.com:443/i-tanishakapoor-master"
+                    }
+        }
         stage('Stop Running Container') {
                      steps {
                         script {
@@ -73,6 +79,12 @@ pipeline
                 bat "docker run -d -p 6000:80 --name c-tanishakapoor-master i-tanishakapoor-master"
                 }
         }
+         stage('Helm chart Deployment') {
+                steps {  
+                            bat "helm upgrade tanishakapoor-master-chart ./helmchart --install"
+                      }
+                    
+            }
 
     }
 }
